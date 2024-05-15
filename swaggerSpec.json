@@ -1,0 +1,576 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Voosh",
+    "description": "Voosh assignment api documentation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://voosh-assignment.vercel.app",
+      "description": "Deployed vercel server"
+    },
+    {
+      "url": "http://localhost:5000",
+      "description": "Local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User Authentication",
+      "description": "Admins and users can register and login/authenticate their account"
+    },
+    {
+      "name": "Profile details",
+      "description": "Admins and users can check their and other users profile details"
+    },
+    {
+      "name": "Update Profile",
+      "description": "Admins and users can update their profile details."
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "tags": [
+          "User Authentication"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userRegistered"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User already exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alreadyRegistered"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/authenticate": {
+      "post": {
+        "tags": [
+          "User Authentication"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidCredentials"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userLogin"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/oauth": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/user/signout": {
+      "post": {
+        "tags": [
+          "User Authentication"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "headers",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful sign out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/logout"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/profile": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@voosh.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "John@voosh"
+          },
+          "phone": {
+            "type": "number",
+            "example": 7354441234
+          },
+          "bio": {
+            "type": "string",
+            "example": "This is a short description about myself"
+          },
+          "photo": {
+            "type": "string",
+            "example": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8ngU1GxK9VdwXCRVuxzISotU9_hBfHaLDYA9wevgXtuSqbhWiWRlrLE733g&s"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "example": false
+          },
+          "loginType": {
+            "type": "string",
+            "example": "voosh"
+          },
+          "isAccountPrivate": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "userName",
+          "email",
+          "password",
+          "phone",
+          "bio",
+          "photo",
+          "isAdmin",
+          "loginType",
+          "isAccountPrivate"
+        ]
+      },
+      "userRegistered": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "new user registered successfuly."
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "userName": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "example": "john.doe@voosh.com"
+              },
+              "phone": {
+                "type": "number",
+                "example": 7354441234
+              },
+              "bio": {
+                "type": "string",
+                "example": "This is a short description about myself"
+              },
+              "photo": {
+                "type": "string",
+                "example": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8ngU1GxK9VdwXCRVuxzISotU9_hBfHaLDYA9wevgXtuSqbhWiWRlrLE733g&s"
+              },
+              "isAdmin": {
+                "type": "boolean",
+                "example": false
+              },
+              "loginType": {
+                "type": "string",
+                "example": "voosh"
+              },
+              "isAccountPrivate": {
+                "type": "boolean",
+                "example": false
+              },
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
+              },
+              "id": {
+                "type": "string",
+                "example": "6644843a735b795f7c929e95"
+              }
+            }
+          }
+        }
+      },
+      "alreadyRegistered": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User already registered."
+          },
+          "error": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "userDetails": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@voosh.com"
+          },
+          "phone": {
+            "type": "number",
+            "example": 7354441234
+          },
+          "bio": {
+            "type": "string",
+            "example": "This is a short description about myself"
+          },
+          "photo": {
+            "type": "string",
+            "example": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8ngU1GxK9VdwXCRVuxzISotU9_hBfHaLDYA9wevgXtuSqbhWiWRlrLE733g&s"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "example": false
+          },
+          "loginType": {
+            "type": "string",
+            "example": "voosh"
+          },
+          "isAccountPrivate": {
+            "type": "boolean",
+            "example": false
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
+          },
+          "id": {
+            "type": "string",
+            "example": "6644843a735b795f7c929e95"
+          }
+        }
+      },
+      "userLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john.doe@voosh.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "John@voosh"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "loginSuccess": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "login successful."
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "userName": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "example": "john.doe@voosh.com"
+              },
+              "phone": {
+                "type": "number",
+                "example": 7354441234
+              },
+              "bio": {
+                "type": "string",
+                "example": "This is a short description about myself"
+              },
+              "photo": {
+                "type": "string",
+                "example": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8ngU1GxK9VdwXCRVuxzISotU9_hBfHaLDYA9wevgXtuSqbhWiWRlrLE733g&s"
+              },
+              "isAdmin": {
+                "type": "boolean",
+                "example": false
+              },
+              "loginType": {
+                "type": "string",
+                "example": "voosh"
+              },
+              "isAccountPrivate": {
+                "type": "boolean",
+                "example": false
+              },
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
+              },
+              "id": {
+                "type": "string",
+                "example": "6644843a735b795f7c929e95"
+              }
+            }
+          }
+        }
+      },
+      "invalidCredentials": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Invalid user credentials."
+          },
+          "error": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "logout": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "You have been signed out successfully."
+          }
+        }
+      },
+      "profileUpdateSuccess": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "profile details updated successfully."
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "userName": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "example": "john.doe@voosh.com"
+              },
+              "phone": {
+                "type": "number",
+                "example": 7354441234
+              },
+              "bio": {
+                "type": "string",
+                "example": "This is a short description about myself"
+              },
+              "photo": {
+                "type": "string",
+                "example": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8ngU1GxK9VdwXCRVuxzISotU9_hBfHaLDYA9wevgXtuSqbhWiWRlrLE733g&s"
+              },
+              "isAdmin": {
+                "type": "boolean",
+                "example": false
+              },
+              "loginType": {
+                "type": "string",
+                "example": "voosh"
+              },
+              "isAccountPrivate": {
+                "type": "boolean",
+                "example": false
+              },
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
+              },
+              "id": {
+                "type": "string",
+                "example": "6644843a735b795f7c929e95"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
