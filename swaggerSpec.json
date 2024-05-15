@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Voosh",
-    "description": "Voosh assignment api documentation",
+    "title": "Voosh Enhanced Authentication API",
+    "description": "These set of APIs provide endpoints for managing administrator and user details for authorization and authentication purposes.\n\n**Features include:**\n- **Register new Admin/User**: One can register as admin or user.\n- **Authenticate**: Both users and admins can be authenticated.\n- **Sign out**: Admins and users can sign out.\n- **Profile Details**: Admins and users can see their profile details like email, contact, profile pic, bio etc.\n- **User List**: Admins can see both private and public user details where as normal users can see only public account details.\n- **Update profile details**: Admins and users can update their profile details like making their account private/public or changing username, password, email, phone, bio, profile pic etc. \n\n\n**Contact Information**:\n- **Name:** Jyoti Kamal Singh\n- **Email:** [jyotikamal.official@gmail.com](mailto:jyotikamal.official@gmail.com)\n- **Phone:** [7354440856](tel:7354440856)\n- **Designation:** Software Developer\n- **Portfolio:** [https://jyoti-kamal.netlify.app/](https://jyoti-kamal.netlify.app/)",
     "version": "1.0.0"
   },
   "servers": [
@@ -26,22 +26,13 @@
     },
     {
       "name": "Update Profile",
-      "description": "Admins and users can update their profile details."
+      "description": "Admins and users can update their profile details. Like making their account public/private change their userName, password, photo, phone, email ect"
     }
   ],
   "paths": {
     "/": {
       "get": {
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -54,16 +45,7 @@
         "tags": [
           "User Authentication"
         ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "description": "One can register as admin or user.",
         "responses": {
           "201": {
             "description": "User created",
@@ -103,16 +85,7 @@
         "tags": [
           "User Authentication"
         ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "description": "Both users and admins can be authenticated.",
         "responses": {
           "200": {
             "description": "Login successful.",
@@ -147,42 +120,16 @@
         }
       }
     },
-    "/api/user/oauth": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
     "/api/user/signout": {
       "post": {
         "tags": [
           "User Authentication"
         ],
-        "description": "",
+        "description": "Admins and users can sign out.",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "headers",
+            "name": "email",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -198,17 +145,30 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "User not registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userNotRegistered"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/user/profile": {
       "get": {
-        "description": "",
+        "tags": [
+          "Profile details"
+        ],
+        "description": "Admins and users can see their profile details like email, contact, profile pic, bio etc.",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "email",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -216,35 +176,66 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Profile fetched successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userNotRegistered"
+                }
+              }
+            }
           }
         }
       },
       "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
+        "tags": [
+          "Update Profile"
         ],
+        "description": "Admins and users can update their profile details like making their account private/public or changing username, password, email, phone, bio, profile pic etc.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Profile updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userDetails"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profileUpdateBody"
+              }
+            }
           }
         }
       }
     },
     "/api/users": {
       "get": {
-        "description": "",
+        "tags": [
+          "Profile details"
+        ],
+        "description": "Admins can see both private and public user details where as normal users can see only public account details.",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "email",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -252,7 +243,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Profile fetched successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userNotRegistered"
+                }
+              }
+            }
           }
         }
       }
@@ -354,13 +362,9 @@
                 "type": "boolean",
                 "example": false
               },
-              "token": {
-                "type": "string",
-                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
-              },
-              "id": {
-                "type": "string",
-                "example": "6644843a735b795f7c929e95"
+              "isLogin": {
+                "type": "boolean",
+                "example": true
               }
             }
           }
@@ -414,13 +418,9 @@
             "type": "boolean",
             "example": false
           },
-          "token": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
-          },
-          "id": {
-            "type": "string",
-            "example": "6644843a735b795f7c929e95"
+          "isLogin": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
@@ -483,13 +483,9 @@
                 "type": "boolean",
                 "example": false
               },
-              "token": {
-                "type": "string",
-                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
-              },
-              "id": {
-                "type": "string",
-                "example": "6644843a735b795f7c929e95"
+              "isLogin": {
+                "type": "boolean",
+                "example": true
               }
             }
           }
@@ -508,6 +504,15 @@
           }
         }
       },
+      "userNotRegistered": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User not registered."
+          }
+        }
+      },
       "logout": {
         "type": "object",
         "properties": {
@@ -516,6 +521,55 @@
             "example": "You have been signed out successfully."
           }
         }
+      },
+      "profileUpdateBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john.doe@voosh.com"
+          },
+          "updateParams": {
+            "type": "object",
+            "properties": {
+              "isAccountPrivate": {
+                "type": "boolean",
+                "example": true
+              },
+              "bio": {
+                "type": "string",
+                "example": "add your updated new bio here"
+              },
+              "photo": {
+                "type": "string",
+                "example": "add new profile pic link here"
+              },
+              "userName": {
+                "type": "string",
+                "example": "add new username here"
+              },
+              "phone": {
+                "type": "number",
+                "example": 7632198042
+              },
+              "email": {
+                "type": "string",
+                "example": "add new email here"
+              }
+            },
+            "required": [
+              "isAccountPrivate",
+              "bio",
+              "photo",
+              "userName",
+              "phone",
+              "email"
+            ]
+          }
+        },
+        "required": [
+          "email"
+        ]
       },
       "profileUpdateSuccess": {
         "type": "object",
@@ -559,16 +613,18 @@
                 "type": "boolean",
                 "example": false
               },
-              "token": {
-                "type": "string",
-                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4"
-              },
-              "id": {
-                "type": "string",
-                "example": "6644843a735b795f7c929e95"
+              "isLogin": {
+                "type": "boolean",
+                "example": true
               }
             }
           }
+        }
+      },
+      "userList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/userDetails"
         }
       }
     }

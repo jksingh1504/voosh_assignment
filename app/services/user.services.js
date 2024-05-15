@@ -1,21 +1,12 @@
 const { default: axios } = require("axios");
 const userModel = require("../models/user.model.js");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = process.env;
 
 //register new user
 async function register(userDetails) {
   try {
     // hashing password for security
     userDetails.password = bcrypt.hashSync(userDetails.password, 8);
-    userDetails.token = jwt.sign(
-      { email: userDetails.email, isAdmin: userDetails.isAdmin },
-      SECRET_KEY,
-      {
-        expiresIn: "7d",
-      }
-    );
     const newUser = new userModel(userDetails);
     await newUser.save();
     return {
@@ -23,7 +14,6 @@ async function register(userDetails) {
       user: newUser,
     };
   } catch (error) {
-    console.log(error);
     if (
       error.errorResponse &&
       error.errorResponse.code === 11000 &&
@@ -40,6 +30,7 @@ async function authenticate(userParams) {
   try {
     const { email, password } = userParams;
     const userDetails = await userModel.findOne({ email });
+    console.log(userDetails);
     if (
       !userDetails ||
       !bcrypt.compareSync(
@@ -48,14 +39,8 @@ async function authenticate(userParams) {
       )
     )
       throw "Invalid user credentials.";
-    const token = jwt.sign(
-      { email, isAdmin: userDetails.isAdmin },
-      SECRET_KEY,
-      {
-        expiresIn: "7d",
-      }
-    );
-    await userModel.updateOne({ email }, { token });
+    // make the user login
+    await userModel.updateOne({ email }, { isLogin: true });
     const updatedUser = await userModel.findOne({ email });
     return { message: "login successful.", user: updatedUser };
   } catch (error) {
@@ -86,10 +71,14 @@ async function OAuth() {
 }
 
 // sign out the user
-async function signOut({ email }) {
+async function signOut(email) {
   try {
-    //delete token to sign out the user and user will be restricted through the middleware
-    await userModel.updateOne({ email }, { $unset: { token: "" } });
+    // user is signed out
+    const user = await userModel.findOneAndUpdate(
+      { email },
+      { $set: { isLogin: false } }
+    );
+    if (!user) throw "User not registered.";
     return { message: "You have been signed out successfully." };
   } catch (error) {
     throw error;
@@ -97,42 +86,33 @@ async function signOut({ email }) {
 }
 
 // get user profile details
-async function getProfileDetails({ email }) {
+async function getProfileDetails(email) {
   try {
-    return await userModel.findOne({ email });
+    if (!email) throw "Please enter a registered email.";
+    const user = await userModel.findOne({ email });
+    if (!user) throw "User not registered.";
+    return user;
   } catch (error) {
     throw error;
   }
 }
 
 // update user profile
-async function updateProfile(
-  updateParams,
-  { email: tokenEmail, isAdmin: tokenIsAdmin }
-) {
+async function updateProfile(updateDetails) {
   try {
-    const { password, email: paramEmail, isAdmin: paramIsAdmin } = updateParams;
+    const { email, updateParams } = updateDetails;
+    const { password, email: updateParamsEmail } = updateParams
+      ? updateParams
+      : {};
     // hashing the password if available
     if (password) {
       updateParams.password = bcrypt.hashSync(password, 8);
     }
-    // token contains following details so update the token
-    if (paramEmail || paramIsAdmin) {
-      updateParams.token = jwt.sign(
-        {
-          email: paramEmail || tokenEmail, //consider user entered email/email from jwt token
-          isAdmin: paramIsAdmin || tokenIsAdmin, //consider user entered isAdmin flag or jwt isAdmin flag
-        },
-        SECRET_KEY,
-        {
-          expiresIn: "7d",
-        }
-      );
-    }
-    await userModel.updateOne({ email: tokenEmail }, updateParams);
-    //find by email either from updated param or if not mentioned then token email
+    const user = await userModel.findOneAndUpdate({ email }, updateParams);
+    if (!user) throw "User not registered.";
+    // get updated user details
     const userDetails = await userModel.findOne({
-      email: paramEmail || tokenEmail,
+      email: updateParamsEmail || email,
     });
     return {
       message: "profile details updated successfully.",
@@ -144,10 +124,12 @@ async function updateProfile(
 }
 
 // get list of public and private user accounts based on user admin status true/false
-async function getUsers({ email, isAdmin }) {
+async function getUsers(email) {
   try {
+    if (!email) throw "Please enter a registered email.";
+    const userDetails = await userModel.findOne({ email });
     //show all public and private accounts to admin
-    if (isAdmin) return await userModel.find();
+    if (userDetails.isAdmin) return await userModel.find();
     //show only public accounts to normal user
     return await userModel.find({ isAccountPrivate: false });
   } catch (error) {

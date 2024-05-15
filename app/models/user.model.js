@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   loginType: { type: String, required: true },
   isAccountPrivate: { type: Boolean, required: true },
-  token: { type: String, required: true },
+  isLogin: { type: Boolean, required: true, default: true },
 });
 
 // remove password and version keys and _id from response

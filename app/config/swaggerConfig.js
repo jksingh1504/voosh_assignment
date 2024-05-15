@@ -2,8 +2,9 @@ const swaggerAutogen = require("swagger-autogen")({ openapi: "3.0.0" });
 
 const doc = {
   info: {
-    title: "Voosh",
-    description: "Voosh assignment api documentation",
+    title: "Voosh Enhanced Authentication API",
+    description:
+      "These set of APIs provide endpoints for managing administrator and user details for authorization and authentication purposes.\n\n**Features include:**\n- **Register new Admin/User**: One can register as admin or user.\n- **Authenticate**: Both users and admins can be authenticated.\n- **Sign out**: Admins and users can sign out.\n- **Profile Details**: Admins and users can see their profile details like email, contact, profile pic, bio etc.\n- **User List**: Admins can see both private and public user details where as normal users can see only public account details.\n- **Update profile details**: Admins and users can update their profile details like making their account private/public or changing username, password, email, phone, bio, profile pic etc. \n\n\n**Contact Information**:\n- **Name:** Jyoti Kamal Singh\n- **Email:** [jyotikamal.official@gmail.com](mailto:jyotikamal.official@gmail.com)\n- **Phone:** [7354440856](tel:7354440856)\n- **Designation:** Software Developer\n- **Portfolio:** [https://jyoti-kamal.netlify.app/](https://jyoti-kamal.netlify.app/)",
   },
   servers: [
     {
@@ -28,7 +29,8 @@ const doc = {
     },
     {
       name: "Update Profile",
-      description: "Admins and users can update their profile details.",
+      description:
+        "Admins and users can update their profile details. Like making their account public/private change their userName, password, photo, phone, email ect",
     },
   ],
   components: {
@@ -57,9 +59,7 @@ const doc = {
           isAdmin: false,
           loginType: "voosh",
           isAccountPrivate: false,
-          token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4",
-          id: "6644843a735b795f7c929e95",
+          isLogin: true,
         },
       },
       alreadyRegistered: {
@@ -76,9 +76,7 @@ const doc = {
         isAdmin: false,
         loginType: "voosh",
         isAccountPrivate: false,
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4",
-        id: "6644843a735b795f7c929e95",
+        isLogin: true,
       },
       userLogin: { $email: "john.doe@voosh.com", $password: "John@voosh" },
       loginSuccess: {
@@ -93,16 +91,26 @@ const doc = {
           isAdmin: false,
           loginType: "voosh",
           isAccountPrivate: false,
-          token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4",
-          id: "6644843a735b795f7c929e95",
+          isLogin: true,
         },
       },
       invalidCredentials: {
         message: "Invalid user credentials.",
         error: true,
       },
+      userNotRegistered: { message: "User not registered." },
       logout: { message: "You have been signed out successfully." },
+      profileUpdateBody: {
+        $email: "john.doe@voosh.com",
+        updateParams: {
+          $isAccountPrivate: true,
+          $bio: "add your updated new bio here",
+          $photo: "add new profile pic link here",
+          $userName: "add new username here",
+          $phone: 7632198042,
+          $email: "add new email here",
+        },
+      },
       profileUpdateSuccess: {
         message: "profile details updated successfully.",
         user: {
@@ -115,11 +123,10 @@ const doc = {
           isAdmin: false,
           loginType: "voosh",
           isAccountPrivate: false,
-          token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQHZvb3NoLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MTU3NjYzMzAsImV4cCI6MTcxNjM3MTEzMH0.qRCCXMjUCQfMSAE93djjJI7j6XM9O0fex3P5uTsbIO4",
-          id: "6644843a735b795f7c929e95",
+          isLogin: true,
         },
       },
+      userList: [{ type: "object", $ref: "#/components/schemas/userDetails" }],
     },
   },
 };

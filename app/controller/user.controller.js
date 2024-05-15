@@ -2,7 +2,10 @@ const userServices = require("../services/user.services.js");
 
 exports.register = (req, res, next) => {
   // #swagger.tags = ['User Authentication']
-  /*  #swagger.requestBody = {
+
+  /*  
+  #swagger.description="One can register as admin or user."
+  #swagger.requestBody = {
             required: true,
             content: {
                 "application/json": {
@@ -12,8 +15,7 @@ exports.register = (req, res, next) => {
                 }
             }
         } 
-  */
-  /*
+ 
         #swagger.responses[201] = {
             description:"User created",
             content: {
@@ -24,8 +26,7 @@ exports.register = (req, res, next) => {
                 }
             }
         } 
-    */
-  /*
+    
         #swagger.responses[400] = {
             description:"User already exist",
             content: {
@@ -46,7 +47,9 @@ exports.register = (req, res, next) => {
 
 exports.authenticate = (req, res, next) => {
   // #swagger.tags = ['User Authentication']
-  /*  #swagger.requestBody = {
+  /* 
+  #swagger.description="Both users and admins can be authenticated."
+  #swagger.requestBody = {
             required: true,
             content: {
                 "application/json": {
@@ -56,8 +59,7 @@ exports.authenticate = (req, res, next) => {
                 }
             }
         } 
-  */
-  /*
+ 
         #swagger.responses[200] = {
             description:"Login successful.",
             content: {
@@ -68,8 +70,7 @@ exports.authenticate = (req, res, next) => {
                 }
             }
         } 
-    */
-  /*
+  
         #swagger.responses[400] = {
             description:"Invalid Credentials.",
             content: {
@@ -98,6 +99,7 @@ exports.OAuth = (req, res, next) => {
 exports.signOut = (req, res, next) => {
   // #swagger.tags = ['User Authentication']
   /*
+    #swagger.description="Admins and users can sign out."
         #swagger.responses[200] = {
             description:"Successful sign out",
             content: {
@@ -108,31 +110,111 @@ exports.signOut = (req, res, next) => {
                 }
             }
         }
+        #swagger.responses[400] = {
+            description:"User not registered.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userNotRegistered"
+                    }  
+                }
+            }
+        } 
   */
   userServices
-    .signOut(req.auth)
+    .signOut(req.query.email)
     .then((data) => res.status(200).json(data))
     .catch((err) => next(err));
 };
 
 exports.getProfileDetails = (req, res, next) => {
+  /*
+        #swagger.tags = ['Profile details']
+        #swagger.description="Admins and users can see their profile details like email, contact, profile pic, bio etc."
+        #swagger.responses[200] = {
+            description:"Profile fetched successfully.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userDetails"
+                    }  
+                }
+            }
+        }
+        #swagger.responses[400] = {
+            description:"User not registered.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userNotRegistered"
+                    }  
+                }
+            }
+        } 
+  */
   userServices
-    .getProfileDetails(req.auth)
+    .getProfileDetails(req.query.email)
     .then((data) => res.status(200).json(data))
     .catch((err) => next(err));
 };
 
 exports.updateProfile = (req, res, next) => {
-  const { body, auth } = req;
+  /*  #swagger.tags=["Update Profile"]
+    #swagger.description="Admins and users can update their profile details like making their account private/public or changing username, password, email, phone, bio, profile pic etc."
+    #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/profileUpdateBody"
+                    }  
+                }
+            }
+        } 
+    #swagger.responses[200] = {
+            description:"Profile updated successfully.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userDetails"
+                    }  
+                }
+            }
+        }
+  */
   userServices
-    .updateProfile(body, auth)
+    .updateProfile(req.body)
     .then((data) => res.status(200).json(data))
     .catch((err) => next(err));
 };
 
 exports.getUsers = (req, res, next) => {
+  /*
+        #swagger.tags = ['Profile details']
+        #swagger.description="Admins can see both private and public user details where as normal users can see only public account details."
+        #swagger.responses[200] = {
+            description:"Profile fetched successfully.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userList"
+                    }  
+                }
+            }
+        }
+        #swagger.responses[400] = {
+            description:"User not registered.",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userNotRegistered"
+                    }  
+                }
+            }
+        } 
+  */
   userServices
-    .getUsers(req.auth)
+    .getUsers(req.query.email)
     .then((data) => res.status(200).json(data))
     .catch((err) => next(err));
 };
