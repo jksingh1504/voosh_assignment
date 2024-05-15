@@ -9,9 +9,16 @@ const userRoutes = require("./app/routes/user.routes.js");
 const { PORT } = process.env;
 
 const app = express();
+// cdn for swagger ui css
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
 // swagger ui server setup
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, { customCssUrl: CSS_URL })
+);
 
 app.use(cors(), express.json());
 
