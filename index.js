@@ -11,7 +11,7 @@ const { PORT } = process.env;
 const app = express();
 // cdn for swagger ui css
 const CSS_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.css";
 
 // swagger ui server setup
 app.use(
