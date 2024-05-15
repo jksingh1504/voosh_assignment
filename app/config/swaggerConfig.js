@@ -8,7 +8,7 @@ const doc = {
   },
   servers: [
     {
-      url: "https://voosh-assignment.vercel.app",
+      url: "https://voosh-assignment-jksingh.vercel.app",
       description: "Deployed vercel server",
     },
     {
